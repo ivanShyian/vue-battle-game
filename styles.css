@@ -112,6 +112,7 @@ button:disabled {
 
 .log--damage {
   color: red;
+  font-weight: 700;
 }
 
 .log--heal {
