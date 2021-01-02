@@ -8,26 +8,51 @@ const app = Vue.createApp({
             playerHealth: 100,
             monsterHealth: 100,
             currentRound: 0,
+            gameStatus: null,
         }
+    },
+    watch: {
+        playerHealth(value){
+            if (value <= 0 && this.monsterHealth <= 0) {
+                this.gameStatus = 'draw';
+            } else if (value <=0) {
+                this.gameStatus = 'lost'
+            }
+        },
+        monsterHealth(value){
+            if (value <= 0 && this.playerHealth <= 0) {
+                this.gameStatus = 'draw';
+            } else if (value <=0) {
+                this.gameStatus = 'won'                
+            }
+        },
     },
     computed: {
         calcMonsterHealth() {
-            return {
-                width: this.monsterHealth + '%'
+            if (this.monsterHealth < 0) {
+                return {width: '0%'}
             }
+            return {width: this.monsterHealth + '%'}
         },
         calcPlayerHealth() {
-            return {
-                width: this.playerHealth + '%'
+            if (this.playerHealth < 0) {
+                return {width: '0%'}
             }
+            return {width: this.playerHealth + '%'}
         },
         showSpecialAttack() {
             // if number not deviding by 3 - true (:disable="true")
             // if number devidibg by 3 - false (:disable="false")
             return this.currentRound % 3 !== 0;
-        }
+        },
     },
     methods: {
+        startGame() {
+            this.playerHealth = 100,
+            this.monsterHealth = 100,
+            this.currentRound = 0,
+            this.gameStatus = null
+        },
         specialAttack() {
             this.currentRound++;
             const attackValue = getRandomValue(10, 24);
@@ -55,7 +80,9 @@ const app = Vue.createApp({
                 this.playerHealth += healValue;
             }
             this.attackPlayer();
-
+        },
+        surrender() {
+            this.gameStatus = 'lost';
         }
     }
 });
